@@ -20,7 +20,7 @@ public class AddCredit {
                 String channelName,
                 String userInfo,
                 PointType type,
-                int amount
+                long amount
         );
     }
 
@@ -31,7 +31,7 @@ public class AddCredit {
     private final @NonNull String channelName;
     private final @NonNull String userInfo;
     private final @NonNull PointType type;
-    private final int amount;
+    private final long amount;
 
     private String sanitizedUserInfo;
     private ViewerIdentity viewerIdentity;
@@ -59,6 +59,7 @@ public class AddCredit {
     }
 
     private void addPointsToViewerSafe() {
+        System.out.println("AddCredit.addPointsToViewerSafe");
         bankService.addPoints(safe.getId(), type, amount);
     }
 
@@ -70,7 +71,7 @@ public class AddCredit {
             @NonNull String channelName,
             @NonNull String userInfo,
             @NonNull PointType type,
-            int amount
+            long amount
     ) {
         return new AddCredit(bankService, viewerIdentityService, platform, channelName, userInfo, type, amount).execute();
     }

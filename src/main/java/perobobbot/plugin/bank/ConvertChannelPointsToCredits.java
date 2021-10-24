@@ -10,7 +10,6 @@ import perobobbot.oauth.OAuthTokenIdentifierSetter;
 import perobobbot.oauth.TokenIdentifier;
 import perobobbot.twitch.api.RewardRedemptionStatus;
 import perobobbot.twitch.client.api.TwitchService;
-import perobobbot.twitch.client.api.channelpoints.UpdateRedemptionStatus;
 import perobobbot.twitch.eventsub.api.event.ChannelPointsCustomRewardRedemptionAddEvent;
 
 @Log4j2

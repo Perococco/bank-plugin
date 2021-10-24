@@ -6,6 +6,7 @@ import perobobbot.command.CommandAction;
 import perobobbot.command.CommandParsing;
 import perobobbot.lang.ExecutionContext;
 import perobobbot.lang.PointType;
+import perobobbot.lang.Role;
 import perobobbot.plugin.bank.BankExtension;
 
 @RequiredArgsConstructor
@@ -19,14 +20,13 @@ public class ReadWriteBalance implements CommandAction {
     @Override
     public void execute(@NonNull CommandParsing parsing, @NonNull ExecutionContext context) {
         final var userInfo = parsing.getParameter(USERINFO_PARAMETER);
-        final var amount = parsing.findIntParameter(AMOUNT_PARAMETER);
+        final var amount = parsing.findLongParameter(AMOUNT_PARAMETER);
         if (amount.isPresent()) {
             extension.addSomePoint(
-                    context.getChatConnectionInfo(),
-                    context.getChannelName(),
+                    context,
                     userInfo, PointType.CREDIT, amount.get());
         } else {
-            extension.showUserPoint(context.getChatConnectionInfo(), context.getChannelName(), userInfo);
+            extension.showUserPoint(context, userInfo);
         }
     }
 }

@@ -12,6 +12,7 @@ import perobobbot.extension.ExtensionFactory;
 import perobobbot.lang.NotificationDispatcher;
 import perobobbot.lang.Role;
 import perobobbot.oauth.OAuthTokenIdentifierSetter;
+import perobobbot.plugin.bank.action.GivePoints;
 import perobobbot.plugin.bank.action.ReadBalance;
 import perobobbot.plugin.bank.action.ReadWriteBalance;
 import perobobbot.twitch.client.api.TwitchService;
@@ -33,10 +34,12 @@ public class BankExtensionFactory implements ExtensionFactory<BankExtension> {
     @Override
     public @NonNull ImmutableList<CommandDeclaration> createCommandDefinitions(@NonNull BankExtension extension, @NonNull ServiceProvider serviceProvider, CommandDeclaration.@NonNull Factory factory) {
         final var readBalance = AccessRule.create(Role.ANY_USER, Duration.ofSeconds(30), Role.ADMINISTRATOR.cooldown(Duration.ZERO));
-        final var writeBalance = AccessRule.create(Role.ADMINISTRATOR, Duration.ofSeconds(1));
+        final var writeBalance = AccessRule.create(Role.TRUSTED_USER, Duration.ofSeconds(10));
+        final var givePoints = AccessRule.create(Role.ANY_USER, Duration.ofSeconds(30));
         return ImmutableList.of(
                 factory.create("credits", readBalance, new ReadBalance(extension)),
-                factory.create("credits {%s} [%s]".formatted(ReadWriteBalance.USERINFO_PARAMETER, ReadWriteBalance.AMOUNT_PARAMETER), writeBalance, new ReadWriteBalance(extension))
+                factory.create("credits {%s} [%s]".formatted(ReadWriteBalance.USERINFO_PARAMETER, ReadWriteBalance.AMOUNT_PARAMETER), writeBalance, new ReadWriteBalance(extension)),
+                factory.create("give {%s} {%s}".formatted(ReadWriteBalance.USERINFO_PARAMETER, ReadWriteBalance.AMOUNT_PARAMETER), givePoints, new GivePoints(serviceProvider.getAnyService(Requirements.IO),extension))
         );
     }
 }
