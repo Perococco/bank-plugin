@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import perobobbot.lang.Platform;
-import perobobbot.lang.PointType;
 import perobobbot.oauth.BroadcasterIdentifier;
 import perobobbot.oauth.OAuthTokenIdentifierSetter;
 import perobobbot.oauth.TokenIdentifier;
@@ -24,7 +23,7 @@ public class ConvertChannelPointsToCredits {
 
     private final @NonNull ChannelPointsCustomRewardRedemptionAddEvent event;
     private final @NonNull OAuthTokenIdentifierSetter oAuthTokenIdentifierSetter;
-    private final @NonNull AddCredit.Adder creditAdder;
+    private final @NonNull CreditAdder.Adder creditAdder;
     private final @NonNull TwitchService twitchService;
 
     private void convert() {
@@ -46,7 +45,7 @@ public class ConvertChannelPointsToCredits {
         final var viewerId = event.getUser().getId();
         final var credits = event.getReward().getCost();
         try {
-            creditAdder.execute(Platform.TWITCH, channelName, viewerId, PointType.CREDIT, credits);
+            creditAdder.execute(Platform.TWITCH, channelName, viewerId,Constants.DEFAULT_POINT, credits);
             return RewardRedemptionStatus.FULFILLED;
         } catch (Throwable t) {
             LOG.warn("Fail to add point for '{}' redemption cancelled : {}", event.getUser().getLogin(), t.getMessage());
@@ -58,7 +57,7 @@ public class ConvertChannelPointsToCredits {
 
     public static Converter createConverter(
             @NonNull OAuthTokenIdentifierSetter oAuthTokenIdentifierSetter,
-            @NonNull AddCredit.Adder creditAdder,
+            @NonNull CreditAdder.Adder creditAdder,
             @NonNull TwitchService twitchService
     ) {
         return event -> new ConvertChannelPointsToCredits(event,oAuthTokenIdentifierSetter,creditAdder,twitchService).convert();
@@ -67,7 +66,7 @@ public class ConvertChannelPointsToCredits {
     public static void convert(
             @NonNull ChannelPointsCustomRewardRedemptionAddEvent event,
             @NonNull OAuthTokenIdentifierSetter oAuthTokenIdentifierSetter,
-            @NonNull AddCredit.Adder creditAdder,
+            @NonNull CreditAdder.Adder creditAdder,
             @NonNull TwitchService twitchService
     ) {
         new ConvertChannelPointsToCredits(event, oAuthTokenIdentifierSetter, creditAdder, twitchService).convert();

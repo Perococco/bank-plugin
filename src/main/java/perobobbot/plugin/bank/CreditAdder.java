@@ -3,7 +3,6 @@ package perobobbot.plugin.bank;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import perobobbot.data.com.ViewerIdentityNotFound;
 import perobobbot.data.service.BankService;
 import perobobbot.data.service.ViewerIdentityService;
 import perobobbot.lang.Platform;
@@ -13,7 +12,8 @@ import perobobbot.lang.ViewerIdentity;
 
 @Log4j2
 @RequiredArgsConstructor
-public class AddCredit {
+public class CreditAdder {
+
     public interface Adder {
         @NonNull ViewerIdentity execute(
                 Platform platform,
@@ -59,7 +59,6 @@ public class AddCredit {
     }
 
     private void addPointsToViewerSafe() {
-        System.out.println("AddCredit.addPointsToViewerSafe");
         bankService.addPoints(safe.getId(), type, amount);
     }
 
@@ -73,7 +72,7 @@ public class AddCredit {
             @NonNull PointType type,
             long amount
     ) {
-        return new AddCredit(bankService, viewerIdentityService, platform, channelName, userInfo, type, amount).execute();
+        return new CreditAdder(bankService, viewerIdentityService, platform, channelName, userInfo, type, amount).execute();
     }
 
 
