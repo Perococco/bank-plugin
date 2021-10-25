@@ -51,18 +51,8 @@ public class BankExtension extends ExtensionBase {
     @Override
     protected void onDisabled() {
         super.onDisabled();
+        subscriptionHolder.unsubscribe();
     }
-
-
-    public void showMyPoint(@NonNull ChatConnectionInfo chatConnectionInfo,
-                            @NonNull ChatUser chatUser,
-                            @NonNull String channelName) {
-        final var viewerIdentity = viewerIdentityService.updateIdentity(chatUser.getPlatform(), chatUser.getUserId(), chatUser.getUserName().toLowerCase(), chatUser.getUserName());
-        final var safe = bankService.findSafe(viewerIdentity.getId(), channelName);
-        final var message = new SafeContentDescription(safe).withUser(chatUser.getHighlightedUserName());
-        io.send(chatConnectionInfo, channelName, message.toString());
-    }
-
 
 
     public void onMessage(@NonNull Notification notification) {

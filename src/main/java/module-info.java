@@ -8,6 +8,7 @@ module perobobbot.plugin.bank {
     requires org.apache.logging.log4j;
     requires jplugman.api;
     requires com.google.common;
+    requires reactor.core;
 
     requires perobobbot.plugin;
     requires perobobbot.extension;
