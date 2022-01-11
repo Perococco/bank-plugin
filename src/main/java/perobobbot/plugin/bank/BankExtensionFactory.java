@@ -7,13 +7,13 @@ import perobobbot.access.AccessRule;
 import perobobbot.chat.core.IO;
 import perobobbot.command.CommandDeclaration;
 import perobobbot.data.service.BankService;
-import perobobbot.data.service.ViewerIdentityService;
+import perobobbot.data.service.PlatformUserService;
 import perobobbot.extension.ExtensionFactory;
 import perobobbot.lang.NotificationDispatcher;
 import perobobbot.lang.Role;
 import perobobbot.oauth.OAuthTokenIdentifierSetter;
-import perobobbot.plugin.bank.action.PointGiver;
 import perobobbot.plugin.bank.action.BalanceReader;
+import perobobbot.plugin.bank.action.PointGiver;
 import perobobbot.plugin.bank.action.ReadWriteBalance;
 import perobobbot.twitch.client.api.TwitchService;
 
@@ -26,7 +26,7 @@ public class BankExtensionFactory implements ExtensionFactory<BankExtension> {
         return new BankExtension(serviceProvider.getSingleService(IO.class),
                 serviceProvider.getSingleService(BankService.class),
                 serviceProvider.getSingleService(TwitchService.class),
-                serviceProvider.getSingleService(ViewerIdentityService.class),
+                serviceProvider.getSingleService(PlatformUserService.class),
                 serviceProvider.getSingleService(NotificationDispatcher.class),
                 serviceProvider.getSingleService(OAuthTokenIdentifierSetter.class));
     }

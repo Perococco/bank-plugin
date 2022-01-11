@@ -22,6 +22,7 @@ module perobobbot.plugin.bank {
 
     requires perobobbot.twitch.client.api;
     requires perobobbot.twitch.event.sub.api;
+    requires perobobbot.eventsub;
 
 
     provides Plugin with JPlugin;

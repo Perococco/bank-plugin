@@ -20,7 +20,7 @@ public class BalanceReader {
 
     public void read() {
         final var chatUser = context.getMessageOwner();
-        final var viewerIdentity = bankRequirements.updateIdentity(chatUser);
+        final var viewerIdentity = bankRequirements.updateUserIdentity(chatUser);
         final var safe = bankRequirements.findSafe(context, viewerIdentity.getId());
         final var message = new SafeContentDescription(safe).withUser(chatUser.getHighlightedUserName());
 

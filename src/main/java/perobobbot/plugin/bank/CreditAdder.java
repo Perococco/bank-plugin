@@ -4,18 +4,18 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import perobobbot.data.service.BankService;
-import perobobbot.data.service.ViewerIdentityService;
+import perobobbot.data.service.PlatformUserService;
 import perobobbot.lang.Platform;
+import perobobbot.lang.PlatformUser;
 import perobobbot.lang.PointType;
 import perobobbot.lang.Safe;
-import perobobbot.lang.ViewerIdentity;
 
 @Log4j2
 @RequiredArgsConstructor
 public class CreditAdder {
 
     public interface Adder {
-        @NonNull ViewerIdentity execute(
+        @NonNull PlatformUser execute(
                 Platform platform,
                 String channelName,
                 String userInfo,
@@ -25,24 +25,24 @@ public class CreditAdder {
     }
 
     private final @NonNull BankService bankService;
-    private final @NonNull ViewerIdentityService viewerIdentityService;
+    private final @NonNull PlatformUserService platformUserService;
 
     private final @NonNull Platform platform;
-    private final @NonNull String channelName;
+    private final @NonNull String channelId;
     private final @NonNull String userInfo;
     private final @NonNull PointType type;
     private final long amount;
 
     private String sanitizedUserInfo;
-    private ViewerIdentity viewerIdentity;
+    private PlatformUser platformUser;
     private Safe safe;
 
-    private @NonNull ViewerIdentity execute() {
+    private @NonNull PlatformUser execute() {
         this.sanitizeUserInfo();
         this.retrieveViewerIdentity();
         this.findViewerSafe();
         this.addPointsToViewerSafe();
-        return viewerIdentity;
+        return platformUser;
     }
 
     private void sanitizeUserInfo() {
@@ -51,11 +51,11 @@ public class CreditAdder {
     }
 
     private void retrieveViewerIdentity() {
-        viewerIdentity = viewerIdentityService.getIdentity(platform, sanitizedUserInfo);
+        platformUser = platformUserService.getPlatformUser(platform, sanitizedUserInfo);
     }
 
     private void findViewerSafe() {
-        this.safe = bankService.findSafe(viewerIdentity.getId(), channelName);
+        this.safe = bankService.findSafe(platformUser.getId(), channelId);
     }
 
     private void addPointsToViewerSafe() {
@@ -63,21 +63,21 @@ public class CreditAdder {
     }
 
 
-    public static @NonNull ViewerIdentity execute(
+    public static @NonNull PlatformUser execute(
             @NonNull BankService bankService,
-            @NonNull ViewerIdentityService viewerIdentityService,
+            @NonNull PlatformUserService platformUserService,
             @NonNull Platform platform,
-            @NonNull String channelName,
+            @NonNull String channelId,
             @NonNull String userInfo,
             @NonNull PointType type,
             long amount
     ) {
-        return new CreditAdder(bankService, viewerIdentityService, platform, channelName, userInfo, type, amount).execute();
+        return new CreditAdder(bankService, platformUserService, platform, channelId, userInfo, type, amount).execute();
     }
 
 
-    public static Adder createAdder(@NonNull BankService bankService, @NonNull ViewerIdentityService viewerIdentityService) {
-        return (platform, channelName, userInfo, type, amount) -> execute(bankService, viewerIdentityService, platform, channelName, userInfo, type, amount);
+    public static Adder createAdder(@NonNull BankService bankService, @NonNull PlatformUserService platformUserService) {
+        return (platform, channelId, userInfo, type, amount) -> execute(bankService, platformUserService, platform, channelId, userInfo, type, amount);
     }
 
 

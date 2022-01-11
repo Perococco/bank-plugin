@@ -4,11 +4,10 @@ import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import perobobbot.chat.core.IO;
 import perobobbot.data.service.BankService;
-import perobobbot.data.service.ViewerIdentityService;
+import perobobbot.data.service.PlatformUserService;
 import perobobbot.extension.ExtensionBase;
 import perobobbot.lang.*;
 import perobobbot.oauth.OAuthTokenIdentifierSetter;
-import perobobbot.plugin.bank.action.SafeContentDescription;
 import perobobbot.twitch.client.api.TwitchService;
 import perobobbot.twitch.eventsub.api.event.ChannelPointsCustomRewardRedemptionAddEvent;
 
@@ -26,7 +25,7 @@ public class BankExtension extends ExtensionBase {
 
     private final @NonNull BankService bankService;
 
-    private final @NonNull ViewerIdentityService viewerIdentityService;
+    private final @NonNull PlatformUserService platformUserService;
 
     private final @NonNull CreditAdder.Adder creditAdder;
     private final @NonNull ConvertChannelPointsToCredits.Converter redemptionConverter;
@@ -36,15 +35,15 @@ public class BankExtension extends ExtensionBase {
     public BankExtension(@NonNull IO io,
                          @NonNull BankService bankService,
                          @NonNull TwitchService twitchService,
-                         @NonNull ViewerIdentityService viewerIdentityService,
+                         @NonNull PlatformUserService platformUserService,
                          @NonNull NotificationDispatcher notificationDispatcher,
                          @NonNull OAuthTokenIdentifierSetter oAuthTokenIdentifierSetter) {
         super(NAME);
         this.io = io;
-        this.creditAdder = CreditAdder.createAdder(bankService, viewerIdentityService);
+        this.creditAdder = CreditAdder.createAdder(bankService, platformUserService);
         this.redemptionConverter = ConvertChannelPointsToCredits.createConverter(oAuthTokenIdentifierSetter, creditAdder, twitchService);
         this.bankService = bankService;
-        this.viewerIdentityService = viewerIdentityService;
+        this.platformUserService = platformUserService;
         this.subscriptionHolder.replaceWith(() -> notificationDispatcher.addListener(this::onMessage));
     }
 

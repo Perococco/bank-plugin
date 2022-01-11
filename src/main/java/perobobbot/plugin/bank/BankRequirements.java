@@ -6,7 +6,7 @@ import lombok.NonNull;
 import perobobbot.chat.core.IO;
 import perobobbot.data.service.BankService;
 import perobobbot.data.service.BankTransaction;
-import perobobbot.data.service.ViewerIdentityService;
+import perobobbot.data.service.PlatformUserService;
 import perobobbot.lang.*;
 import perobobbot.lang.fp.Function1;
 import perobobbot.oauth.OAuthTokenIdentifierSetter;
@@ -22,7 +22,7 @@ public class BankRequirements {
     private final @NonNull IO io;
     private final @NonNull BankService bankService;
     private final @NonNull TwitchService twitchService;
-    private final @NonNull ViewerIdentityService viewerIdentityService;
+    private final @NonNull PlatformUserService platformUserService;
     private final @NonNull NotificationDispatcher notificationDispatcher;
     private final @NonNull OAuthTokenIdentifierSetter oAuthTokenIdentifierSetter;
     private final @NonNull CreditAdder.Adder creditAdder;
@@ -33,17 +33,17 @@ public class BankRequirements {
         this.io = serviceProvider.getAnyService(Requirements.IO);
         this.bankService = serviceProvider.getAnyService(Requirements.BANK_SERVICE);
         this.twitchService = serviceProvider.getAnyService(Requirements.TWITCH_SERVICE);
-        this.viewerIdentityService = serviceProvider.getAnyService(Requirements.VIEWER_IDENTITY_SERVICE);
+        this.platformUserService = serviceProvider.getAnyService(Requirements.PLATFORM_USER_SERVICE);
         this.notificationDispatcher = serviceProvider.getAnyService(Requirements.NOTIFICATION_DISPATCHER);
         this.oAuthTokenIdentifierSetter = serviceProvider.getAnyService(Requirements.O_AUTH_TOKEN_IDENTIFIER_SETTER);
 
-        this.creditAdder = CreditAdder.createAdder(bankService, viewerIdentityService);
+        this.creditAdder = CreditAdder.createAdder(bankService, platformUserService);
         this.redemptionConverter = ConvertChannelPointsToCredits.createConverter(oAuthTokenIdentifierSetter, creditAdder, twitchService);
 
     }
 
-    public @NonNull ViewerIdentity updateUserIdentity(@NonNull ChatUser chatUser) {
-        return viewerIdentityService.updateIdentity(chatUser.getPlatform(), chatUser.getUserId(), chatUser.getUserName().toLowerCase(), chatUser.getUserName());
+    public @NonNull PlatformUser updateUserIdentity(@NonNull ChatUser chatUser) {
+        return platformUserService.updateUserIdentity(chatUser.toUserIdentity());
     }
 
     public void send(@NonNull ExecutionContext context, @NonNull Function1<? super DispatchContext,String> messageBuilder) {
@@ -66,15 +66,12 @@ public class BankRequirements {
         return new BankTransaction(bankService, giverSafe.getId(), Constants.DEFAULT_POINT, amount, Duration.ofSeconds(2));
     }
 
-    public @NonNull ViewerIdentity addCredit(@NonNull ExecutionContext context, @NonNull String receiver, long amount) {
+    public @NonNull PlatformUser addCredit(@NonNull ExecutionContext context, @NonNull String receiver, long amount) {
         return this.creditAdder.execute(context.getPlatform(),context.getChannelName(),receiver,Constants.DEFAULT_POINT,amount);
     }
 
-    public @NonNull Optional<ViewerIdentity> findIdentity(@NonNull Platform platform, @NonNull String userInfo) {
-        return this.viewerIdentityService.findIdentity(platform,userInfo);
+    public @NonNull Optional<PlatformUser> findIdentity(@NonNull Platform platform, @NonNull String userInfo) {
+        return this.platformUserService.findPlatformUser(platform,userInfo);
     }
 
-    public @NonNull ViewerIdentity updateIdentity(ChatUser chatUser) {
-        return viewerIdentityService.updateIdentity(chatUser.getPlatform(), chatUser.getUserId(), chatUser.getUserName().toLowerCase(), chatUser.getUserName());
-    }
 }

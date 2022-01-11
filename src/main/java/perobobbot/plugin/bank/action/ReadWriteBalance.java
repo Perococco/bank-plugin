@@ -50,7 +50,7 @@ public class ReadWriteBalance {
         final var userName = removeAtSignPrefix(userInfo);
         final var identity = bankRequirements.findIdentity(context.getPlatform(), userName);
 
-        final var message = identity.map(ViewerIdentity::getId)
+        final var message = identity.map(PlatformUser::getId)
                                     .map(this::findSafeFromViewerIdentity)
                                     .map(SafeContentDescription::new)
                                     .map(s -> s.withUser(userName))

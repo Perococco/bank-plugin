@@ -6,13 +6,11 @@ import lombok.extern.log4j.Log4j2;
 import perobobbot.command.CommandAction;
 import perobobbot.command.CommandParsing;
 import perobobbot.lang.ExecutionContext;
-import perobobbot.lang.ViewerIdentity;
+import perobobbot.lang.PlatformUser;
 import perobobbot.lang.fp.Function0;
 import perobobbot.plugin.bank.BankDictionary;
 import perobobbot.plugin.bank.BankRequirements;
 import perobobbot.plugin.bank.Constants;
-
-import java.lang.constant.Constable;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -46,7 +44,7 @@ public class PointGiver {
             final var giverSafe = bankRequirements.findChatterSafe(context);
             final var transaction = bankRequirements.createTransaction(giverSafe,amount);
 
-            final Function0<ViewerIdentity> fundTransfert = () -> bankRequirements.addCredit(context, receiver, amount);
+            final Function0<PlatformUser> fundTransfert = () -> bankRequirements.addCredit(context, receiver, amount);
 
             final var viewerIdentity = transaction.getAndRollBackOnError(fundTransfert);
             final var viewerPseudo = viewerIdentity.getPseudo();

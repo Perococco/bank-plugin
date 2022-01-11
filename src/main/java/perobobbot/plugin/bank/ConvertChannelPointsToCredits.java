@@ -43,7 +43,6 @@ public class ConvertChannelPointsToCredits {
     }
 
     private Mono<CustomRewardRedemption> handleError(@NonNull Throwable t) {
-        System.err.println("Fail to update redemption status " + t.getMessage());
         return Mono.empty();
     }
 
